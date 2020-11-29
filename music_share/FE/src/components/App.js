@@ -1,8 +1,14 @@
 import React from "react";
 import { render } from "react-dom";
+import HomePage from "./HomePage";
 
-function App() {
-    return <h1>Testing React Code</h1>;
+
+const App = () => {
+    return (
+        <>
+            <HomePage />
+        </>
+    )
 }
 
 export default App;
