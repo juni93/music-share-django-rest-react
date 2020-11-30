@@ -54,7 +54,7 @@ function HomePage() {
                 <Route exact path='/' render={() => roomCode ? (<Redirect to={`/room/${roomCode}`}/>) : renderHP()}></Route>
                 <Route path='/join' component={RoomJoin}/>
                 <Route path='/create' component={RoomCreate}/>
-                <Route path='/room/:roomId' render={(props) => {
+                <Route path='/room/:roomCode' render={(props) => {
                         return <Room {...props} leaveRoomCallback={clearRoomCode}/>;
                     }} 
                 />

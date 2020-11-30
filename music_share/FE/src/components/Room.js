@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Grid, Button, Typography } from "@material-ui/core";
+import RoomCreate from "./RoomCreate";
 
 
 const Room = (props) => {
@@ -8,13 +9,14 @@ const Room = (props) => {
     const [roomDetails, setRoomDetails] = useState({
         votesToSkip: 2,
         guestCanPause: false,
-        isHost: false
+        isHost: false,
+        showSettings: false,
     });
-    const roomId = (props.match.params.roomId);
+    const roomCode = (props.match.params.roomCode);
     const history = useHistory();
 
     const getRoomDetails = async () => {
-        const response = await fetch(`/api/v0/get-room?roomId=${roomId}`);
+        const response = await fetch(`/api/v0/get-room?roomCode=${roomCode}`);
         if(!response.ok) {
             props.leaveRoomCallback();
             props.history.push("/");
@@ -24,9 +26,8 @@ const Room = (props) => {
                 votesToSkip: roomJson.votes_to_skip,
                 guestCanPause: roomJson.guest_can_pause,
                 isHost: roomJson.is_host,
-            })
-        }
-        
+            });
+        };
     };
 
     const handleLeaveRoom = async () => {
@@ -42,13 +43,59 @@ const Room = (props) => {
 
     useEffect(() => {
         getRoomDetails();
-    }, [])
+    }, []);
 
+    const updateShowRoomSettings = (value) => {
+        setRoomDetails({...roomDetails, showSettings: value});
+    }
+
+    const renderSettings = () => {
+        return (
+            <Grid container spacing={1}>
+                <Grid item xs={12} align="center">
+                    <RoomCreate
+                        update={true}
+                        votesToSkip={roomDetails.votesToSkip}
+                        guestCanPause={roomDetails.guestCanPause}
+                        roomCode={roomCode}
+                        updateCallback={getRoomDetails}
+                    />
+                </Grid>
+                <Grid item xs={12} align="center">
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => updateShowRoomSettings(false)}
+                    >
+                        Close
+                    </Button>
+                </Grid>
+            </Grid>
+        );
+    };
+
+    const renderSettingsButton = () => {
+        return (
+            <Grid item xs={12} align="center">
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => updateShowRoomSettings(true)}
+                >
+                    Settings
+                </Button>
+            </Grid>
+          );
+    }
+
+   
     return (
+        <>
+        {roomDetails.showSettings && renderSettings()};
         <Grid container spacing={1}>
             <Grid item xs={12} align="center">
                 <Typography variant="h4" component="h4">
-                    Code: {roomId}
+                    Code: {roomCode}
                 </Typography>
             </Grid>
             <Grid item xs={12} align="center">
@@ -66,6 +113,7 @@ const Room = (props) => {
                     Host: {`${roomDetails.isHost ? 'Yes' : 'No'}`}
                 </Typography>
             </Grid>
+            {roomDetails.isHost ? renderSettingsButton() : null}
             <Grid item xs={12} align="center">
                 <Button
                     variant="contained"
@@ -76,7 +124,7 @@ const Room = (props) => {
                 </Button>
             </Grid>
         </Grid>
-        
+        </>
     )
 }
 
