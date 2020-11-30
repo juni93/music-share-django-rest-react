@@ -4,6 +4,8 @@ import RoomJoin from "./RoomJoin";
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 import Room from "./Room";
 import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 
 
 function HomePage() {
@@ -13,18 +15,23 @@ function HomePage() {
         const response = await fetch("/api/v0/user-in-room");
         const data = response.json();
         setRoomCode(data.code);
-    }
+    };
+
     
     useEffect(() => {
         getRoomCode();
     }, []);
+
+    const clearRoomCode = () => {
+        setRoomCode(null);
+    };
 
     const renderHP = () => {
         return(
             <Grid container spacing={3}>
                 <Grid item xs={12} align="center">
                     <Typography variant="h3" compact="h3">
-                        House Party
+                        Share The Music
                     </Typography>
                 </Grid>
                 <Grid item xs={12} align="center">
@@ -47,7 +54,10 @@ function HomePage() {
                 <Route exact path='/' render={() => roomCode ? (<Redirect to={`/room/${roomCode}`}/>) : renderHP()}></Route>
                 <Route path='/join' component={RoomJoin}/>
                 <Route path='/create' component={RoomCreate}/>
-                <Route path='/room/:roomId' component={Room} />
+                <Route path='/room/:roomId' render={(props) => {
+                        return <Room {...props} leaveRoomCallback={clearRoomCode}/>;
+                    }} 
+                />
             </Switch>
         </Router>
     )
