@@ -28,7 +28,7 @@ const RoomCreate = () => {
         };
         fetch("/api/v0/create-room", requestOptions)
         .then((response) => response.json())
-        .then((data) => history.push(`/room/${roomCode}`))
+        .then((data) => history.push(`/room/${data.code}`))
     }
   
     return (
