@@ -105,7 +105,7 @@ class LeaveRoom(APIView):
 class UpdateRoom(APIView):
     serializer_class = UpdateRoomSerializer
 
-    def path(self, request, format=None):
+    def patch(self, request, format=None):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
